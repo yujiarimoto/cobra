@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Jogo da Cobrinha</title>
+    <style>
+        body { text-align: center; font-family: Arial; }
+        canvas { border: 1px solid rgb(255, 255, 255); }
+        body {
+            background-image: url(../Imagens/cobra.png.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+        display: block; /* Adicione isso */
+        margin: 20px auto; /* Adicione isso */
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    p {
+        margin-top: 20px;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+  
+}
+    </style>
+</head>
+<body>
+    <h1>Jogo da Cobrinha</h1>
+    <button id="start">Iniciar Jogo 
+     </button>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script>
+       
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('start');
+        
+        let snake = [{x: 200, y: 200}];
+        let dir = {x: 0, y: 0};
+        let food = {x: 100, y: 100};
+        let running = false;
+        
+        function draw() {
+            ctx.clearRect(0, 0, 400, 400);
+            ctx.fillStyle = 'green';
+            snake.forEach(s => ctx.fillRect(s.x, s.y, 20, 20));
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, 20, 20);
+        }
+        
+        function update() {
+            if (!running) return;
+            let head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+            if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) {
+                running = false;
+                alert('Game Over!');
+                return;
+            }
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                food = {x: Math.floor(Math.random() * 20) * 20, y: Math.floor(Math.random() * 20) * 20};
+            } else {
+                snake.pop();
+            }
+        }
+        
+        function loop() {
+            update();
+            draw();
+            if (running) setTimeout(loop, 200);
+        }
+        
+        startBtn.onclick = () => {
+            running = true;
+            loop();
+        };
+        
+        document.onkeydown = (e) => {
+            if (!running) return;
+            if (e.key === 'ArrowUp' && dir.y === 0) dir = {x: 0, y: -20};
+            if (e.key === 'ArrowDown' && dir.y === 0) dir = {x: 0, y: 20};
+            if (e.key === 'ArrowLeft' && dir.x === 0) dir = {x: -20, y: 0};
+            if (e.key === 'ArrowRight' && dir.x === 0) dir = {x: 20, y: 0};
+        };
+    </script>
+</body>
+</html>
